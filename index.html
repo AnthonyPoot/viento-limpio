@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Viento Limpio — Aerogeneradores Helicoidales en Yucatán</title>
+  <meta name="description" content="Proyecto interactivo sobre aerogeneradores helicoidales (turbinas eólicas de eje vertical), sus ventajas técnicas y su implementación sostenible en Yucatán." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #091c24;
+      --bg-panel: #102a35;
+      --bg-card: rgba(20, 48, 60, 0.78);
+      --teal: #27b99a;
+      --teal-glow: rgba(39, 185, 154, 0.32);
+      --gold: #e5b54b;
+      --gold-dark: #c9992e;
+      --text-main: #f1f7f9;
+      --text-muted: #a6c1ca;
+      --border-subtle: rgba(130, 214, 196, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: var(--bg-deep);
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(39, 185, 154, 0.14) 0%, transparent 45%),
+        radial-gradient(circle at 85% 25%, rgba(229, 181, 75, 0.10) 0%, transparent 40%),
+        linear-gradient(180deg, #081820 0%, #0d2530 50%, #081820 100%);
+      color: var(--text-main);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* Navbar */
+    header.navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(14px);
+      background: rgba(9, 28, 36, 0.85);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .nav-container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0.9rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.25rem;
+      letter-spacing: 0.03em;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .brand-badge {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, var(--teal), #15856d);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 14px var(--teal-glow);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.94rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--teal);
+    }
+
+    .nav-cta {
+      background: var(--teal);
+      color: #06211c !important;
+      font-weight: 700 !important;
+      padding: 0.5rem 1.05rem;
+      border-radius: 8px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px var(--teal-glow);
+    }
+
+    /* Hero */
+    .hero {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 4.5rem 1.5rem 3.5rem;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(39, 185, 154, 0.14);
+      border: 1px solid rgba(39, 185, 154, 0.35);
+      color: #67e8cb;
+      font-size: 0.83rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.3rem, 4.5vw, 3.6rem);
+      line-height: 1.1;
+      font-weight: 800;
+      margin-bottom: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 span {
+      background: linear-gradient(90deg, #43e6c2, #e5b54b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-lead {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+
+    .cta-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: linear-gradient(135deg, var(--teal) 0%, #1ea085 100%);
+      color: #041d18;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.08rem;
+      padding: 0.95rem 1.65rem;
+      border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 10px 26px var(--teal-glow);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 32px rgba(39, 185, 154, 0.45);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      background: rgba(229, 181, 75, 0.14);
+      border: 1px solid rgba(229, 181, 75, 0.45);
+      color: var(--gold);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.92rem 1.4rem;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(229, 181, 75, 0.24);
+      transform: translateY(-2px);
+    }
+
+    .apk-meta {
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .apk-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    /* Hero Graphic Card */
+    .turbine-showcase {
+      background: linear-gradient(160deg, rgba(19, 52, 66, 0.9), rgba(11, 31, 40, 0.92));
+      border: 1px solid var(--border-subtle);
+      border-radius: 22px;
+      padding: 2rem;
+      position: relative;
+      box-shadow: 0 22px 50px rgba(0, 0, 0, 0.45);
+      text-align: center;
+    }
+
+    .turbine-svg-wrap {
+      width: 190px;
+      height: 220px;
+      margin: 0 auto 1.25rem;
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .helix-spin {
+      animation: pulseGlow 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      0% { filter: drop-shadow(0 0 8px rgba(39, 185, 154, 0.3)); }
+      100% { filter: drop-shadow(0 0 20px rgba(39, 185, 154, 0.65)); }
+    }
+
+    .showcase-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.85rem;
+      margin-top: 1rem;
+    }
+
+    .stat-box {
+      background: rgba(9, 25, 33, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 12px;
+      padding: 0.85rem;
+    }
+
+    .stat-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--gold);
+    }
+
+    .stat-lbl {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Main Content Sections */
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .intro-banner {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-left: 5px solid var(--teal);
+      border-radius: 16px;
+      padding: 1.75rem 2rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .intro-banner h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      color: #5ce6c8;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-header {
+      margin-bottom: 2rem;
+    }
+
+    .section-tag {
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1.75rem, 3vw, 2.3rem);
+      font-weight: 800;
+    }
+
+    /* Ventajas Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 1.4rem;
+    }
+
+    .info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 1.65rem;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .info-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(39, 185, 154, 0.5);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.35);
+    }
+
+    .card-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: rgba(39, 185, 154, 0.15);
+      border: 1px solid rgba(39, 185, 154, 0.35);
+      display: grid;
+      place-items: center;
+      color: #4fe3c3;
+      font-size: 1.35rem;
+    }
+
+    .info-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.22rem;
+      color: var(--text-main);
+    }
+
+    .info-card p {
+      color: var(--text-muted);
+      font-size: 0.96rem;
+    }
+
+    /* Yucatan Implementation */
+    .yucatan-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.6rem;
+    }
+
+    .feature-panel {
+      background: linear-gradient(145deg, rgba(22, 56, 70, 0.85), rgba(14, 36, 46, 0.9));
+      border: 1px solid rgba(229, 181, 75, 0.28);
+      border-radius: 18px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-panel h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      color: var(--gold);
+      margin-bottom: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .feature-panel p {
+      color: var(--text-main);
+      opacity: 0.92;
+      font-size: 0.98rem;
+    }
+
+    /* Marista Section */
+    .marista-box {
+      background: linear-gradient(135deg, rgba(16, 45, 58, 0.95), rgba(11, 29, 38, 0.98));
+      border: 1px solid rgba(39, 185, 154, 0.35);
+      border-radius: 20px;
+      padding: 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.38);
+    }
+
+    .marista-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: fit-content;
+      background: rgba(229, 181, 75, 0.16);
+      color: var(--gold);
+      border: 1px solid rgba(229, 181, 75, 0.4);
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .marista-box h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1.6rem, 2.8vw, 2.1rem);
+      color: #ffffff;
+    }
+
+    .marista-box p {
+      color: var(--text-muted);
+      font-size: 1.02rem;
+    }
+
+    .marista-box strong {
+      color: #67e8cb;
+    }
+
+    /* App Download Banner */
+    .download-banner {
+      margin-top: 1.5rem;
+      background: linear-gradient(135deg, #123b47 0%, #0b242e 100%);
+      border: 2px solid var(--teal);
+      border-radius: 22px;
+      padding: 2.75rem 2rem;
+      text-align: center;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+    }
+
+    .download-banner h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(1.7rem, 3vw, 2.25rem);
+      margin-bottom: 0.75rem;
+    }
+
+    .download-banner p {
+      color: var(--text-muted);
+      max-width: 620px;
+      margin: 0 auto 1.75rem;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 2rem;
+    }
+
+    @media (max-width: 860px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 2.5rem;
+      }
+      .nav-links {
+        display: none;
+      }
+      .marista-box {
+        padding: 1.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand">
+        <span class="brand-badge">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#041d18" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20"/>
+            <path d="M17 5c-3 2-7 2-10 0s-3 6 0 8 7 2 10 0 3 6 0 8"/>
+          </svg>
+        </span>
+        VIENTO LIMPIO
+      </a>
+      <ul class="nav-links">
+        <li><a href="#que-es">¿Qué son?</a></li>
+        <li><a href="#ventajas">Ventajas</a></li>
+        <li><a href="#yucatan">Uso en Yucatán</a></li>
+        <li><a href="#marista">Enfoque Académico</a></li>
+        <li><a href="VientoLimpio_Anthony.apk" download class="nav-cta">Descargar APK</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Hero Principal -->
+  <section class="hero">
+    <div>
+      <div class="eyebrow">
+        <span>🌱 Energía Eólica Sostenible en Yucatán</span>
+      </div>
+      <h1>Aerogeneradores <span>Helicoidales</span> y el Futuro Energético</h1>
+      <p class="hero-lead">
+        Profundizando en las turbinas eólicas de eje vertical: conoce sus ventajas técnicas, su resistencia ante huracanes, cómo se integran en el ecosistema yucateco y explora nuestro simulador interactivo 3D.
+      </p>
+      <div class="cta-group">
+        <a href="VientoLimpio_Anthony.apk" download="VientoLimpio_Anthony.apk" class="btn-download">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Descargar App (APK)
+        </a>
+        <a href="#ventajas" class="btn-secondary">
+          Explorar Información ↓
+        </a>
+      </div>
+      <div class="apk-meta">
+        <span>📱 <strong>Archivo:</strong> VientoLimpio_Anthony.apk</span>
+        <span>📦 <strong>Tamaño:</strong> ~56.8 MB</span>
+        <span>🤖 <strong>Plataforma:</strong> Android · Parque Eólico 3D</span>
+      </div>
+    </div>
+
+    <!-- Tarjeta visual del aerogenerador -->
+    <div class="turbine-showcase">
+      <div class="turbine-svg-wrap">
+        <svg class="helix-spin" width="160" height="205" viewBox="0 0 160 205" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Base -->
+          <rect x="45" y="182" width="70" height="14" rx="5" fill="#e5b54b"/>
+          <rect x="62" y="162" width="36" height="22" rx="4" fill="#1e4959" stroke="#27b99a" stroke-width="2"/>
+          <!-- Eje central -->
+          <line x1="80" y1="20" x2="80" y2="162" stroke="#a6c1ca" stroke-width="5" stroke-linecap="round"/>
+          <!-- Palas helicoidales -->
+          <path d="M80 22 C130 45, 30 85, 80 112 C130 135, 55 152, 80 158" stroke="#27b99a" stroke-width="10" stroke-linecap="round" fill="none"/>
+          <path d="M80 22 C30 45, 130 85, 80 112 C30 135, 105 152, 80 158" stroke="#e5b54b" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.9"/>
+          <circle cx="80" cy="20" r="6" fill="#27b99a"/>
+        </svg>
+      </div>
+      <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; margin-bottom: 0.25rem;">Turbina de Eje Vertical</h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted);">Diseño en espiral tipo Gorlov / Savonius</p>
+      <div class="showcase-stats">
+        <div class="stat-box">
+          <div class="stat-val">3 m/s</div>
+          <div class="stat-lbl">Arranque con brisa suave</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">~120 kWh</div>
+          <div class="stat-lbl">Producción mensual (a 7 m/s)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ¿Qué es un generador helicoidal? -->
+  <main class="container">
+    <section id="que-es" class="intro-banner">
+      <h2>¿Qué es un Aerogenerador Helicoidal?</h2>
+      <p>
+        Un generador helicoidal (específicamente un aerogenerador de eje vertical) es una turbina eólica cuyas palas tienen un diseño curvo en espiral, como los modelos Gorlov o Savonius helicoidal. A diferencia de los enormes molinos de viento tradicionales de tres aspas horizontales, estos sistemas giran sobre un eje vertical y mantienen su tren de potencia, generador y transformador a nivel del suelo.
+      </p>
+    </section>
+
+    <!-- Ventajas Principales -->
+    <section id="ventajas" style="margin-bottom: 4rem;">
+      <div class="section-header">
+        <span class="section-tag">Ingeniería y Biodiversidad</span>
+        <h2 class="section-title">Ventajas Principales</h2>
+      </div>
+
+      <div class="cards-grid">
+        <article class="info-card">
+          <div class="card-icon">🌴</div>
+          <h3>Resistencia extrema ante huracanes</h3>
+          <p>
+            A diferencia de los enormes molinos tradicionales, los aerogeneradores helicoidales tienen el tren de potencia, el generador y el transformador instalados a nivel del suelo. Esto les otorga un centro de gravedad bajo que, sumado a un diseño estructural que imita la flexibilidad de las palmeras, evita que colapsen ante las fuertes ráfagas y huracanes que azotan la península.
+          </p>
+        </article>
+
+        <article class="info-card">
+          <div class="card-icon">🦇</div>
+          <h3>Seguridad para la fauna endémica</h3>
+          <p>
+            Su giro es más lento y su barrido es mucho más denso. Al no generar la brutal caída de presión atmosférica en el aire (barotrauma) que sí causan las aspas gigantes, protegen a los murciélagos y a las aves endémicas, los cuales son vitales para el ecosistema yucateco.
+          </p>
+        </article>
+
+        <article class="info-card">
+          <div class="card-icon">🧭</div>
+          <h3>Omnidireccionalidad</h3>
+          <p>
+            No necesitan motores ni sensores para orientarse "hacia el viento". Su diseño en espiral atrapa los flujos de aire sin importar de dónde vengan, haciéndolos altamente eficientes en entornos urbanos donde los edificios hacen que el viento cambie de dirección constantemente.
+          </p>
+        </article>
+
+        <article class="info-card">
+          <div class="card-icon">🍃</div>
+          <h3>Eficiencia con vientos bajos</h3>
+          <p>
+            Son capaces de iniciar su rotación con brisas muy suaves (desde los 3 m/s), operando de manera mucho más silenciosa que los aerogeneradores horizontales.
+          </p>
+        </article>
+
+        <article class="info-card">
+          <div class="card-icon">🔧</div>
+          <h3>Mantenimiento económico</h3>
+          <p>
+            Al estar todos los mecanismos complejos a ras de suelo, el mantenimiento es seguro, accesible y no requiere grúas especializadas de gran altura.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Uso e Implementación en Yucatán -->
+    <section id="yucatan" style="margin-bottom: 4rem;">
+      <div class="section-header">
+        <span class="section-tag">Aplicación Regional</span>
+        <h2 class="section-title">Uso e Implementación en Yucatán</h2>
+      </div>
+
+      <div class="yucatan-grid">
+        <div class="feature-panel">
+          <h3>⚡ Microrredes (Microgrids) e Islas de Energía</h3>
+          <p>
+            Su principal implementación en Yucatán es a través de microrredes híbridas, combinándolos con paneles solares y bancos de baterías. Estas microrredes permiten a comunidades aisladas (como en zonas de <strong>Dzilam de Bravo</strong>) o a haciendas ecoturísticas desconectarse por completo de la red, asegurando suministro eléctrico incluso si hay apagones por contingencias climáticas.
+          </p>
+        </div>
+
+        <div class="feature-panel">
+          <h3>🏠 Generación Residencial</h3>
+          <p>
+            Estudios de simulación y mecánica de fluidos han demostrado que un aerogenerador helicoidal expuesto a vientos promedio de <strong>7 m/s</strong> puede producir alrededor de <strong>120 kWh al mes</strong>, capacidad suficiente para sustentar una vivienda estándar de manera limpia y distribuida.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- El Enfoque de la Universidad Marista de Mérida -->
+    <section id="marista" style="margin-bottom: 4rem;">
+      <div class="marista-box">
+        <span class="marista-badge">🎓 Perspectiva y Aportación Académica Local</span>
+        <h2>El Enfoque de la Universidad Marista de Mérida</h2>
+        <p>
+          El impulso hacia este tipo de turbinas más amigables se debe, en gran medida, a la reflexión académica sobre el daño de las alternativas masivas. Especialistas de la Escuela de Recursos Naturales de la <strong>Universidad Marista de Mérida</strong>, liderados por figuras como su director <strong>Miguel Carbajal Rodríguez</strong>, han analizado críticamente el impacto de los megaproyectos eólicos comerciales en Yucatán.
+        </p>
+        <p>
+          Frente a la instalación de torres gigantes de más de 100 metros de altura que deforestan la selva y amenazan la biodiversidad (planteando el debate de si son un <em>"remedio o una consecuencia"</em> ambiental), la Marista aboga por un aprovechamiento de recursos que respete el entorno. Para fomentar la implementación de tecnologías eólicas a menor escala y de bajo impacto —como lo son los sistemas helicoidales en microrredes—, la <strong>Universidad Marista de Mérida</strong> ha integrado estos retos en su oferta académica, destacando su <strong>Maestría en Energías Renovables</strong> para formar profesionales capaces de diseñar sistemas energéticos que protejan el frágil ecosistema kárstico de la región.
+        </p>
+      </div>
+    </section>
+
+    <!-- Sección de Descarga del APK -->
+    <section class="download-banner">
+      <h2>Explora el Parque Eólico 3D en tu Android</h2>
+      <p>
+        Descarga la aplicación interactiva <strong>Viento Limpio</strong> para visualizar los aerogeneradores helicoidales en 3D, controlar la velocidad del viento, observar el ciclo de día y noche y repasar la información clave del proyecto.
+      </p>
+      <a href="VientoLimpio_Anthony.apk" download="VientoLimpio_Anthony.apk" class="btn-download">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Descargar VientoLimpio_Anthony.apk (56.8 MB)
+      </a>
+    </section>
+  </main>
+
+  <footer>
+    <p>Proyecto <strong>Viento Limpio</strong> · Gráficos por Computadora · Semestre 5 · Universidad Marista de Mérida</p>
+  </footer>
+
+</body>
+</html>
